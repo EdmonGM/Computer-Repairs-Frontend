@@ -2,3 +2,13 @@ body {
   /* background-color: #343a40; */
   /* color: white; */
 }
+.cursor-pointer {
+  cursor: pointer;
+}
+.profile-border {
+  border-style: dotted !important;
+  border-width: 2px;
+}
+.profile-border img {
+  max-width: 300px;
+}
