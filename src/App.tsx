@@ -1,34 +1,16 @@
 import "./App.css";
 import Login from "./pages/Login";
 import Navbar from "./pages/Navbar";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { HomePage } from "./pages/Homepage";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
-import useStore from "./app/store";
+import Profile from "./pages/Profile";
 import { useEffect } from "react";
-
-type TokenPayload = {
-  id: string;
-  username: string;
-  email: string;
-};
+import useStore from "./app/store";
 
 function App() {
-  const { setId, setEmail, setUsername } = useStore();
-
-  function decodeToken(): void {
-    let token = Cookies.get("access");
-    if (token) {
-      let { id, username, email }: TokenPayload = jwtDecode(token);
-      setId(id);
-      setUsername(username);
-      setEmail(email);
-    }
-  }
-
-  useEffect(() => decodeToken(), []);
-
+  let url = useLocation().pathname;
+  const decodeToken = useStore((state) => state.decodeToken);
+  useEffect(decodeToken, [url]);
   return (
     <>
       <Navbar />
@@ -36,6 +18,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<HomePage />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </main>
     </>
