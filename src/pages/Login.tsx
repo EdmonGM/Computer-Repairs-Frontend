@@ -1,5 +1,7 @@
-import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { LoginHandler } from "../app/api";
 
 type Inputs = {
   username: string;
@@ -7,12 +9,23 @@ type Inputs = {
 };
 
 export default function Login() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
+  const { mutate: loginMutation } = useMutation({
+    mutationFn: ({ username, password }: Inputs) =>
+      LoginHandler(username, password),
+  });
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    loginMutation({ username: data.username, password: data.password });
+    navigate("/");
+  };
 
   return (
     <div className="my-4">
@@ -25,6 +38,7 @@ export default function Login() {
           <input
             type="text"
             className="form-control"
+            defaultValue="Edmon"
             id="InputUsername"
             {...register("username", {
               required: true,
@@ -41,6 +55,7 @@ export default function Login() {
           <input
             type="password"
             className="form-control"
+            defaultValue="123123123"
             id="InputPassword"
             {...register("password", { required: true })}
           />
