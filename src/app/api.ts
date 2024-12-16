@@ -18,6 +18,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      window.location.pathname = "/login";
+      return Promise.reject(error);
+    }
+  }
+);
+
 async function LoginHandler(username: string, password: string) {
   let res = await api.post("auth/Login", {
     username: username,
@@ -32,4 +42,9 @@ async function GetCurrentUserTickets(): Promise<Array<Object>> {
   return res.data;
 }
 
-export { LoginHandler, GetCurrentUserTickets };
+async function GetUserById(id: string): Promise<Object> {
+  let res = await api.get(`/app-user?userId=${id}`);
+  return res.data;
+}
+
+export { LoginHandler, GetCurrentUserTickets, GetUserById };
