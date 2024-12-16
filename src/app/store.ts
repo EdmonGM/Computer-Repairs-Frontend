@@ -1,23 +1,30 @@
 import { create } from "zustand";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
 
 interface UserState {
   username: string;
   email: string;
   id: string;
-  tickets: Array<Object>;
-  setId: (id: string) => void;
-  setUsername: (username: string) => void;
-  setEmail: (email: string) => void;
+  decodeToken: () => void;
 }
+type TokenPayload = {
+  id: string;
+  username: string;
+  email: string;
+};
 
 const useStore = create<UserState>((set) => ({
   username: "",
   email: "",
   id: "",
-  tickets: [],
-  setId: (id) => set({ id: id }),
-  setUsername: (username) => set({ username: username }),
-  setEmail: (email) => set({ email: email }),
+  decodeToken: () => {
+    let token = Cookies.get("access");
+    if (token) {
+      let { id, username, email }: TokenPayload = jwtDecode(token);
+      set({ id: id, username: username, email: email });
+    }
+  },
 }));
 
 export default useStore;
