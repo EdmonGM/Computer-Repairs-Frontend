@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import useStore from "../app/store";
 import TicketsTable from "../components/homepage/TicketsTable";
+import { Link } from "react-router-dom";
 
 export function HomePage() {
   const { username, decodeToken } = useStore();
@@ -16,7 +17,9 @@ export function HomePage() {
       <section className="my-4">
         <h3>Your Tickets</h3>
         <TicketsTable />
-        <button className="btn btn-success">Create Ticket</button>
+        <Link to="/tickets/new" className="btn btn-success">
+          Create Ticket
+        </Link>
       </section>
     </>
   );
