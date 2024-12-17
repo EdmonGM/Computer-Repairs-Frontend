@@ -12,3 +12,7 @@ body {
 .profile-border img {
   max-width: 300px;
 }
+textarea {
+  resize: none;
+  height: 150px;
+}
