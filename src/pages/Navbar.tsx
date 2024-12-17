@@ -5,7 +5,7 @@ import { NavLink } from "../components/navbar/NavLink";
 export default function Navbar() {
   return (
     <nav
-      className="navbar navbar-expand-lg bg-body-tertiary"
+      className="navbar navbar-expand-sm bg-body-tertiary"
       data-bs-theme="dark"
     >
       <div className="container-fluid">
