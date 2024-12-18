@@ -11,26 +11,18 @@ const api = axios.create({
   withCredentials: true,
 });
 
-api.interceptors.request.use((config) => {
-  let token = Cookies.get("access");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      window.location.pathname = "/login";
+      // window.location.pathname = "/login";
       return Promise.reject(error);
     }
   }
 );
 
 async function LoginHandler(username: string, password: string) {
-  let res = await api.post("auth/Login", {
+  let res = await api.post("auth/login", {
     username: username,
     password: password,
   });
@@ -80,6 +72,10 @@ async function UpdateTicket({
   return res.data;
 }
 
+async function RefreshHandler() {
+  let res = await api.post("/auth/refresh");
+  return res.data;
+}
 export {
   LoginHandler,
   GetCurrentUserTickets,
@@ -87,4 +83,5 @@ export {
   GetTicketById,
   CreateTicket,
   UpdateTicket,
+  RefreshHandler,
 };
