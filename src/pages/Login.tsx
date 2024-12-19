@@ -17,13 +17,13 @@ export default function Login() {
     formState: { errors },
   } = useForm<Inputs>();
 
-  const { mutate: loginMutation } = useMutation({
+  const { mutateAsync: loginMutation } = useMutation({
     mutationFn: ({ username, password }: Inputs) =>
       LoginHandler(username, password),
   });
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    loginMutation({ username: data.username, password: data.password });
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    await loginMutation({ username: data.username, password: data.password });
     navigate("/");
   };
 
