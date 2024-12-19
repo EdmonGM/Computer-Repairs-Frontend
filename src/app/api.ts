@@ -1,5 +1,4 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import { ICreateTicket, ITicket, IUpdateTicket, IUser } from "./types";
 
 const api = axios.create({
@@ -13,11 +12,18 @@ const api = axios.create({
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // window.location.pathname = "/login";
-      return Promise.reject(error);
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.status === 401) {
+      try {
+        await RefreshHandler();
+        return api(originalRequest);
+      } catch (err) {
+        console.error("Refresh token failed", err);
+        window.location.href = "/login";
+      }
     }
+    return Promise.reject(error);
   }
 );
 
@@ -28,6 +34,11 @@ async function LoginHandler(username: string, password: string) {
   });
 
   return res;
+}
+
+async function GetCurrentUser(): Promise<IUser> {
+  let res = await api.get("/app-user/current");
+  return res.data;
 }
 
 async function GetCurrentUserTickets(): Promise<Array<ITicket>> {
@@ -74,10 +85,11 @@ async function UpdateTicket({
 
 async function RefreshHandler() {
   let res = await api.post("/auth/refresh");
-  return res.data;
+  return res.status;
 }
 export {
   LoginHandler,
+  GetCurrentUser,
   GetCurrentUserTickets,
   GetUserById,
   GetTicketById,
