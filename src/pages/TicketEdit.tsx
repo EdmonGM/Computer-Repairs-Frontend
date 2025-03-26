@@ -2,14 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { GetTicketById } from "../app/api";
 import EditTicketForm from "../components/edit/EditTicketForm";
+import NotFound from "./NotFound";
 
 function TicketEdit() {
   const { id } = useParams();
   if (!id) return;
 
-  const { data: ticket, isFetching } = useQuery({
+  const {
+    data: ticket,
+    isFetching,
+    isSuccess,
+  } = useQuery({
     queryFn: () => GetTicketById(id),
     queryKey: ["tickets"],
+    refetchOnWindowFocus: false,
+    retry: false,
   });
   const dateOptions: any = {
     weekday: "long",
@@ -21,6 +28,8 @@ function TicketEdit() {
   };
 
   if (isFetching) return <p>Loading...</p>;
+
+  if (!isSuccess && !ticket) return <NotFound />;
 
   if (ticket) {
     return (
