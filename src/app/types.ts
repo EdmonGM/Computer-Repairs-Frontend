@@ -15,6 +15,12 @@ export interface IUser {
   salary: number;
   tickets: Array<Object>;
 }
+export interface IUpdateUser {
+  name: string;
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+}
 export interface ICreateTicket {
   title: string;
   description: string;
