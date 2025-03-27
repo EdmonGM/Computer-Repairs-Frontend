@@ -1,5 +1,11 @@
 import axios from "axios";
-import { ICreateTicket, ITicket, IUpdateTicket, IUser } from "./types";
+import {
+  ICreateTicket,
+  ITicket,
+  IUpdateTicket,
+  IUpdateUser,
+  IUser,
+} from "./types";
 
 const api = axios.create({
   baseURL: "https://localhost:7198/api/",
@@ -51,6 +57,21 @@ async function GetUserById(id: string): Promise<IUser> {
   return res.data;
 }
 
+async function UpdateCurrentUser({
+  name,
+  email,
+  currentPassword,
+  newPassword,
+}: IUpdateUser) {
+  let res = await api.put("/app-user/edit", {
+    name,
+    email,
+    currentPassword,
+    newPassword,
+  });
+  return res.data;
+}
+
 async function GetTicketById(id: string): Promise<ITicket> {
   let res = await api.get(`/ticket/${id}`);
   return res.data;
@@ -92,6 +113,7 @@ export {
   GetCurrentUser,
   GetCurrentUserTickets,
   GetUserById,
+  UpdateCurrentUser,
   GetTicketById,
   CreateTicket,
   UpdateTicket,
