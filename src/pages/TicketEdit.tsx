@@ -15,8 +15,7 @@ function TicketEdit() {
   } = useQuery({
     queryFn: () => GetTicketById(id),
     queryKey: ["tickets"],
-    refetchOnWindowFocus: false,
-    retry: false,
+    staleTime: Infinity,
   });
   const dateOptions: any = {
     weekday: "long",
