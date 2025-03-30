@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { UpdateTicket } from "../../app/api";
@@ -24,10 +24,11 @@ function EditTicketForm({
       isCompleted: isCompleted,
     },
   });
-
+  const queryClient = useQueryClient();
   const { mutateAsync, isSuccess } = useMutation({
     mutationFn: UpdateTicket,
     mutationKey: ["tickets"],
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tickets"] }),
   });
   const editTicketHandler: SubmitHandler<ICreateTicket> = async (data: any) => {
     Object.keys(data).forEach((item) => {
@@ -113,6 +114,7 @@ function EditTicketForm({
       <button
         className="btn btn-outline-secondary ms-3"
         style={btnStyle}
+        type="button"
         onClick={() => navigate("/")}
       >
         Cancel
