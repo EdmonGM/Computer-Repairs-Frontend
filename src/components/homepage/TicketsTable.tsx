@@ -7,6 +7,8 @@ function TicketsTable() {
   const { data: tickets, isFetching } = useQuery<Array<ITicket>>({
     queryFn: GetCurrentUserTickets,
     queryKey: ["tickets"],
+    staleTime: 60 * 1000, // stale after 1 minute
+    refetchOnMount: "always",
   });
 
   if (isFetching) return <p>Loading...</p>;
