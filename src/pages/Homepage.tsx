@@ -1,24 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import useStore from "../app/store";
 import TicketsTable from "../components/homepage/TicketsTable";
 import { Link } from "react-router-dom";
-import { GetCurrentUser } from "../app/api";
-import { useEffect } from "react";
 
-export function HomePage() {
-  const { setData, username } = useStore();
-  const {
-    data: user,
-    isSuccess,
-    isFetching,
-  } = useQuery({
-    queryFn: GetCurrentUser,
-    queryKey: ["users"],
-  });
-  useEffect(() => {
-    if (isSuccess) setData(user.userName, user.email, user.id);
-  }, [isSuccess]);
-
+interface Props {
+  username: string;
+  isFetching: boolean;
+}
+export function HomePage({ username, isFetching }: Props) {
   return (
     <>
       <section className="my-4">
