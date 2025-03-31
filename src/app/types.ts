@@ -13,6 +13,7 @@ export interface IUser {
   userName: string;
   email: string;
   salary: number;
+  role: string;
   tickets: Array<Object>;
 }
 export interface IUpdateUser {
