@@ -16,6 +16,7 @@ function TicketEdit() {
     queryFn: () => GetTicketById(id),
     queryKey: ["tickets"],
     staleTime: Infinity,
+    refetchOnMount: "always",
   });
   const dateOptions: any = {
     weekday: "long",
