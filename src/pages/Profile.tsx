@@ -31,6 +31,7 @@ function Profile() {
                     <ProfileListItem title="Username" value={user.userName} />
                     <ProfileListItem title="Email" value={user.email} />
                     <ProfileListItem title="Salary" value={user.salary + "$"} />
+                    <ProfileListItem title="Role" value={user.role} />
                     <ProfileListItem
                       title="Number of tickets"
                       value={user.tickets.length}
