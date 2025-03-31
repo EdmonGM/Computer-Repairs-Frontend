@@ -33,6 +33,8 @@ api.interceptors.response.use(
   }
 );
 
+// AUTH ENDPOINTS
+
 async function LoginHandler(username: string, password: string) {
   let res = await api.post("auth/login", {
     username: username,
@@ -42,18 +44,31 @@ async function LoginHandler(username: string, password: string) {
   return res;
 }
 
-async function GetCurrentUser(): Promise<IUser> {
-  let res = await api.get("/app-user/current");
-  return res.data;
+async function RefreshHandler() {
+  let res = await api.post("/auth/refresh");
+  return res.status;
 }
 
+// APP-USERS ENDPOINT
+
+// TODO : GETALL
+
+// TODO : SIGN-UP
+
 async function GetCurrentUserTickets(): Promise<Array<ITicket>> {
-  let res = await api.get("/app-user/tickets");
+  let res = await api.get("/app-users/tickets");
   return res.data;
 }
 
 async function GetUserById(id: string): Promise<IUser> {
-  let res = await api.get(`/app-user?userId=${id}`);
+  let res = await api.get(`/app-users/${id}`);
+  return res.data;
+}
+
+// TODO: DELETE
+
+async function GetCurrentUser(): Promise<IUser> {
+  let res = await api.get("/app-users/current");
   return res.data;
 }
 
@@ -63,7 +78,7 @@ async function UpdateCurrentUser({
   currentPassword,
   newPassword,
 }: IUpdateUser) {
-  let res = await api.put("/app-user/edit", {
+  let res = await api.put("/app-users/current/edit", {
     name,
     email,
     currentPassword,
@@ -72,21 +87,25 @@ async function UpdateCurrentUser({
   return res.data;
 }
 
-async function GetTicketById(id: string): Promise<ITicket> {
-  let res = await api.get(`/ticket/${id}`);
-  return res.data;
-}
+// TICKETS ENDPOINT
+
+// TODO : GETALL
 
 async function CreateTicket({
   title,
   description,
   isCompleted,
 }: ICreateTicket) {
-  let res = await api.post("/ticket", {
+  let res = await api.post("/tickets", {
     title: title,
     description: description,
     isCompleted: isCompleted,
   });
+  return res.data;
+}
+
+async function GetTicketById(id: string): Promise<ITicket> {
+  let res = await api.get(`/tickets/${id}`);
   return res.data;
 }
 
@@ -96,7 +115,7 @@ async function UpdateTicket({
   description,
   isCompleted,
 }: IUpdateTicket) {
-  let res = await api.put(`/ticket/${id}`, {
+  let res = await api.put(`/tickets/${id}`, {
     title: title,
     description: description,
     isCompleted: isCompleted,
@@ -104,12 +123,11 @@ async function UpdateTicket({
   return res.data;
 }
 
-async function RefreshHandler() {
-  let res = await api.post("/auth/refresh");
-  return res.status;
-}
+// TODO : DELETE
+
 export {
   LoginHandler,
+  RefreshHandler,
   GetCurrentUser,
   GetCurrentUserTickets,
   GetUserById,
@@ -117,5 +135,4 @@ export {
   GetTicketById,
   CreateTicket,
   UpdateTicket,
-  RefreshHandler,
 };
