@@ -5,17 +5,37 @@ interface UserState {
   email: string;
   id: string;
   name: string;
-  setData: (username: string, email: string, id: string, name: string) => void;
+  role: string;
+  setData: (
+    username: string,
+    email: string,
+    id: string,
+    name: string,
+    role: string
+  ) => void;
 }
 
-const useStore = create<UserState>((set) => ({
+interface FetchState {
+  message: any | null;
+  setMessage: (message: string | null) => void;
+  clearMessage: () => void;
+}
+
+const useUserStore = create<UserState>((set) => ({
   username: "",
   email: "",
   id: "",
   name: "",
-  setData: (username, email, id, name) => {
-    set({ username: username, email: email, id: id, name });
+  role: "",
+  setData: (username, email, id, name, role) => {
+    set({ username, email, id, name, role });
   },
 }));
 
-export default useStore;
+const useFetchStore = create<FetchState>((set) => ({
+  message: null,
+  setMessage: (message) => set({ message }),
+  clearMessage: () => set({ message: null }),
+}));
+
+export { useUserStore, useFetchStore };
