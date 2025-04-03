@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { UpdateTicket } from "../../app/api";
+import { DeleteTicket, UpdateTicket } from "../../app/api";
 import { useNavigate } from "react-router-dom";
 import { ICreateTicket, IUpdateTicket } from "../../app/types";
+import { useUserStore } from "../../app/store";
 
 function EditTicketForm({
   id,
@@ -11,6 +12,8 @@ function EditTicketForm({
   description,
   isCompleted,
 }: IUpdateTicket) {
+  const { role } = useUserStore();
+
   const {
     register,
     handleSubmit,
@@ -24,24 +27,40 @@ function EditTicketForm({
       isCompleted: isCompleted,
     },
   });
+
   const queryClient = useQueryClient();
-  const { mutateAsync, isSuccess } = useMutation({
+  const { mutateAsync: editTicket, isSuccess: isEditSuccess } = useMutation({
     mutationFn: UpdateTicket,
     mutationKey: ["tickets"],
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tickets"] }),
   });
+  const { mutateAsync: deleteTicket, isSuccess: isDeleteSuccess } = useMutation(
+    {
+      mutationFn: DeleteTicket,
+      mutationKey: ["tickets"],
+      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tickets"] }),
+    }
+  );
+
   const editTicketHandler: SubmitHandler<ICreateTicket> = async (data: any) => {
     Object.keys(data).forEach((item) => {
       if (typeof data[item] == "string") {
         data[item] = data[item].trim();
       }
     });
-    await mutateAsync({
+    await editTicket({
       id: id,
       title: data.title,
       description: data.description,
       isCompleted: data.isCompleted,
     });
+  };
+
+  const deleteTicketHandler = async (id: number) => {
+    await deleteTicket(id);
+    if (isDeleteSuccess) {
+      navigate("/");
+    }
   };
 
   const [descriptionLength, setDescriptionLength] = useState(
@@ -108,18 +127,30 @@ function EditTicketForm({
           Is Completed?
         </label>
       </div>
-      <button className="btn btn-success" type="submit" style={btnStyle}>
-        Save
-      </button>
-      <button
-        className="btn btn-outline-secondary ms-3"
-        style={btnStyle}
-        type="button"
-        onClick={() => navigate("/")}
-      >
-        Cancel
-      </button>
-      {isSuccess && (
+      <div className="d-flex w-25 justify-content-between">
+        <button className="btn btn-success" type="submit" style={btnStyle}>
+          Save
+        </button>
+        <button
+          className="btn btn-outline-secondary"
+          type="button"
+          onClick={() => navigate("/")}
+          style={btnStyle}
+        >
+          Cancel
+        </button>
+        {role === "Admin" && (
+          <button
+            className="btn btn-outline-danger"
+            type="button"
+            onClick={() => deleteTicketHandler(id)}
+            style={btnStyle}
+          >
+            Delete
+          </button>
+        )}
+      </div>
+      {isEditSuccess && (
         <p className="text-success my-2">
           Ticket updated!{" "}
           <svg
