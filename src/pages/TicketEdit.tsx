@@ -11,12 +11,13 @@ function TicketEdit() {
   const {
     data: ticket,
     isFetching,
-    isSuccess,
+    isError,
   } = useQuery({
     queryFn: () => GetTicketById(id),
     queryKey: ["tickets"],
     staleTime: Infinity,
     refetchOnMount: "always",
+    retryDelay: 3000,
   });
   const dateOptions: any = {
     weekday: "long",
@@ -29,7 +30,7 @@ function TicketEdit() {
 
   if (isFetching) return <p>Loading...</p>;
 
-  if (!isSuccess && !ticket) return <NotFound />;
+  if (isError) return <NotFound />;
 
   if (ticket) {
     return (
