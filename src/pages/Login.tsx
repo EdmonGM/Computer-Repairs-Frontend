@@ -1,7 +1,8 @@
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LoginHandler } from "../app/api";
+import InputField from "../components/InputField";
 
 type Inputs = {
   username: string;
@@ -10,16 +11,24 @@ type Inputs = {
 
 export default function Login() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
+  const methods = useForm<Inputs>({
+    defaultValues: {
+      username: "admin",
+      password: "123123123",
+    },
+  });
   const {
-    register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
+  } = methods;
 
   const { mutateAsync: loginMutation } = useMutation({
     mutationFn: ({ username, password }: Inputs) =>
       LoginHandler(username, password),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["current_user"] }),
   });
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -28,47 +37,51 @@ export default function Login() {
   };
 
   return (
-    <div className="my-4">
-      <h3>Login</h3>
-      <form onSubmit={handleSubmit(onSubmit)} className="my-4">
-        <div className="my-2">
-          <label htmlFor="InputUsername" className="form-label">
-            Username:
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            defaultValue="Edmon"
-            id="InputUsername"
-            {...register("username", {
-              required: true,
-              minLength: 4,
-              maxLength: 18,
-            })}
-          />
-          {errors.username && <p className="text-danger fst-italic">Error</p>}
-        </div>
-        <div className="my-2">
-          <label htmlFor="InputPassword" className="form-label">
-            Password:
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            defaultValue="123123123"
-            id="InputPassword"
-            {...register("password", { required: true })}
-          />
-          {errors.password && <p className="text-danger fst-italic">Error</p>}
-        </div>
-        <button
-          type="submit"
-          className="btn btn-secondary my-2"
-          disabled={errors.password || errors.username ? true : false}
-        >
-          Submit
-        </button>
-      </form>
+    <div className="container my-5">
+      <div className="my-4">
+        <h3>Login</h3>
+        <FormProvider {...methods}>
+          <form onSubmit={handleSubmit(onSubmit)} className="my-4">
+            <InputField<Inputs>
+              name="username"
+              label="Username"
+              placeholder="Enter Your Username"
+              defaultValue="admin"
+              rules={{
+                required: { value: true, message: "This field is required!" },
+                minLength: {
+                  value: 4,
+                  message: "Username should not be less than 4 letters",
+                },
+                maxLength: {
+                  value: 18,
+                  message: "Username should not be more than 18 letters",
+                },
+              }}
+            />
+            <InputField
+              name="password"
+              type="password"
+              label="Password"
+              placeholder="Enter Your Password"
+              defaultValue="123123123"
+              rules={{
+                required: {
+                  value: true,
+                  message: "Password should not be less than 8 letters",
+                },
+              }}
+            />
+            <button
+              type="submit"
+              className="btn btn-secondary my-2"
+              disabled={errors.password || errors.username ? true : false}
+            >
+              Submit
+            </button>
+          </form>
+        </FormProvider>
+      </div>
     </div>
   );
 }
