@@ -13,10 +13,17 @@ export interface IUser {
   userName: string;
   email: string;
   salary: number;
-  role: string;
+  role: "Admin" | "Employee";
   tickets: Array<Object>;
 }
 export interface IUpdateUser {
+  username: string;
+  email: string;
+  password: string;
+  name: string;
+  salary: number;
+}
+export interface IUpdateCurrentUser {
   name: string;
   email: string;
   currentPassword: string;
