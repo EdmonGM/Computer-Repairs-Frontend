@@ -34,13 +34,14 @@ function EditTicketForm({
     mutationKey: ["tickets"],
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tickets"] }),
   });
-  const { mutateAsync: deleteTicket, isSuccess: isDeleteSuccess } = useMutation(
-    {
-      mutationFn: DeleteTicket,
-      mutationKey: ["tickets"],
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tickets"] }),
-    }
-  );
+  const { mutateAsync: deleteTicket } = useMutation({
+    mutationFn: DeleteTicket,
+    mutationKey: ["tickets"],
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tickets"] });
+      navigate("/tickets");
+    },
+  });
 
   const editTicketHandler: SubmitHandler<ICreateTicket> = async (data: any) => {
     Object.keys(data).forEach((item) => {
@@ -54,13 +55,6 @@ function EditTicketForm({
       description: data.description,
       isCompleted: data.isCompleted,
     });
-  };
-
-  const deleteTicketHandler = async (id: number) => {
-    await deleteTicket(id);
-    if (isDeleteSuccess) {
-      navigate("/");
-    }
   };
 
   const [descriptionLength, setDescriptionLength] = useState(
@@ -143,7 +137,7 @@ function EditTicketForm({
           <button
             className="btn btn-outline-danger"
             type="button"
-            onClick={() => deleteTicketHandler(id)}
+            onClick={() => deleteTicket(id)}
             style={btnStyle}
           >
             Delete
