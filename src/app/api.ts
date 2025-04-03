@@ -117,7 +117,10 @@ async function UpdateCurrentUser({
 
 // TICKETS ENDPOINT
 
-// TODO : GETALL
+async function GetAllTickets(): Promise<Array<ITicket>> {
+  let res = await api.get<Array<ITicket>>("/tickets");
+  return res.data;
+}
 
 async function CreateTicket({
   title,
@@ -167,6 +170,7 @@ export {
   UpdateUserById,
   UpdateCurrentUser,
   GetTicketById,
+  GetAllTickets,
   CreateTicket,
   UpdateTicket,
   DeleteTicket,
