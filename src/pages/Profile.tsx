@@ -1,24 +1,44 @@
+import { useParams } from "react-router-dom";
+import ProfileModalBtn from "../components/profile/ProfileModalBtn";
+import ProfileListItem from "../components/profile/ProfileListItem";
 import { useQuery } from "@tanstack/react-query";
 import { GetUserById } from "../app/api";
-import useStore from "../app/store";
-import ProfileListItem from "../components/profile/ProfileListItem";
-import ProfileEditModalBtn from "../components/profile/ProfileEditModalBtn";
+import NotFound from "./NotFound";
+import { useUserStore } from "../app/store";
+import UserEditModal from "../components/profile/UserEditModal";
+import ProfileEditModal from "../components/profile/ProfileEditModal";
+import ProfileDeleteModal from "../components/profile/ProfileDeleteModal";
 
 function Profile() {
-  const id = useStore((state) => state.id);
-  const { data: user, isFetching } = useQuery({
-    queryFn: () => GetUserById(id),
+  const { id } = useParams();
+  const { role, id: currentUserId } = useUserStore();
+  const {
+    data: user,
+    isFetching,
+    isSuccess,
+    isError,
+  } = useQuery({
+    queryFn: () => GetUserById(id ?? ""),
     queryKey: ["users"],
+    staleTime: Infinity,
+    refetchOnMount: "always",
+    retry: false,
   });
 
   if (isFetching) return <p>Loading...</p>;
 
-  if (user) {
+  if (isError) return <NotFound />;
+
+  if (isSuccess)
     return (
       <>
         <section className="my-4">
-          <h1>Your Profile</h1>
-          <main className="card profile-border">
+          {user.id == id ? (
+            <h1>Your Profile</h1>
+          ) : (
+            <h1>{user.userName} Profile</h1>
+          )}
+          <div className="card profile-border">
             <div className="row">
               <div className="col-md-4 col d-flex justify-content-center">
                 <img src="/person-1.png" alt="Profile Picture" className="" />
@@ -34,20 +54,41 @@ function Profile() {
                     <ProfileListItem title="Role" value={user.role} />
                     <ProfileListItem
                       title="Number of tickets"
-                      value={user.tickets.length}
+                      value={user?.tickets?.length}
                     />
                   </ul>
                 </div>
               </div>
             </div>
-          </main>
-          <div className="my-4">
-            <ProfileEditModalBtn id="ProfileEdit" body="Edit Profile" />
+          </div>
+          <div className="my-4 d-flex gap-3">
+            <ProfileModalBtn id="ProfileEdit" body="Edit Profile" />
+            {role === "Admin" && user.id != currentUserId && (
+              <ProfileModalBtn
+                id="UserDelete"
+                body="Delete User"
+                color="danger"
+              />
+            )}
           </div>
         </section>
+        {role === "Admin" ? (
+          <UserEditModal
+            id="ProfileEdit"
+            label="ProfileEditModal"
+            title="Edit User"
+            user={user}
+          />
+        ) : (
+          <ProfileEditModal
+            id="ProfileEdit"
+            label="ProfileEditModal"
+            title="Edit Your Profile"
+          />
+        )}
+        <ProfileDeleteModal id="UserDelete" label="DeleteUserModal" />
       </>
     );
-  }
 }
 
 export default Profile;
