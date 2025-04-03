@@ -1,8 +1,9 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { NavLink } from "../components/navbar/NavLink";
+import { useUserStore } from "../app/store";
 
 export default function Navbar() {
+  const { role, id } = useUserStore();
   return (
     <nav
       className="navbar navbar-expand-sm bg-body-tertiary"
@@ -25,9 +26,13 @@ export default function Navbar() {
         </button>
         <div className="collapse navbar-collapse" id="navbarCollapseItems">
           <ul className="navbar-nav">
-            <NavLink path="profile" title="Profile" />
-            <NavLink path="tickets" title="Tickets" />
-            <NavLink path="about" title="About" />
+            <NavLink path={id} title="Profile" />
+            {role === "Admin" && (
+              <>
+                <NavLink path="tickets" title="Tickets" />
+                <NavLink path="users" title="Users" />
+              </>
+            )}
           </ul>
         </div>
       </div>
