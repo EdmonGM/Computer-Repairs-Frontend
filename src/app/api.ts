@@ -1,13 +1,15 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse, isAxiosError } from "axios";
 import {
   ICreateTicket,
   ITicket,
+  IUpdateCurrentUser,
   IUpdateTicket,
   IUpdateUser,
   IUser,
 } from "./types";
+import { useFetchStore } from "./store";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: "https://localhost:7198/api/",
   headers: {
     "Access-Control-Allow-Origin": "*",
@@ -17,21 +19,33 @@ const api = axios.create({
 });
 
 api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  async (response: AxiosResponse) => {
+    return Promise.resolve(response);
+  },
+  async (error: AxiosError) => {
+    if (!isAxiosError(error) || !error.config) return Promise.reject(error);
+
     if (error.status === 401) {
       try {
         await RefreshHandler();
-        return api(originalRequest);
-      } catch (err) {
-        console.error("Refresh token failed", err);
-        window.location.href = "/login";
+        return api(error.config);
+      } catch (error) {
+        console.log(error);
       }
     }
+    if (error.status === 401) {
+      window.location.href = "/login";
+    }
+
     return Promise.reject(error);
   }
 );
+
+function ApiMessageHandler(res: AxiosResponse) {
+  if (isAxiosError(res)) {
+    useFetchStore.getState().setMessage(res.response?.data ?? null);
+  }
+}
 
 // AUTH ENDPOINTS
 
@@ -51,7 +65,10 @@ async function RefreshHandler() {
 
 // APP-USERS ENDPOINT
 
-// TODO : GETALL
+async function GetAllUsers(): Promise<Array<IUser>> {
+  let res = await api.get("/app-users");
+  return res.data;
+}
 
 // TODO : SIGN-UP
 
@@ -61,11 +78,22 @@ async function GetCurrentUserTickets(): Promise<Array<ITicket>> {
 }
 
 async function GetUserById(id: string): Promise<IUser> {
-  let res = await api.get(`/app-users/${id}`);
+  let res = await api.get<IUser>(`/app-users/${id}`);
   return res.data;
 }
 
-// TODO: DELETE
+async function UpdateUserById({ id, user }: { id: string; user: IUpdateUser }) {
+  let res = await api.put(`/app-users/${id}`, {
+    ...user,
+  });
+  return res.data;
+}
+
+async function DeleteUserById(id: string) {
+  let res = await api.delete(`/app-users/${id}`);
+  ApiMessageHandler(res);
+  return res?.data;
+}
 
 async function GetCurrentUser(): Promise<IUser> {
   let res = await api.get("/app-users/current");
@@ -77,7 +105,7 @@ async function UpdateCurrentUser({
   email,
   currentPassword,
   newPassword,
-}: IUpdateUser) {
+}: IUpdateCurrentUser) {
   let res = await api.put("/app-users/current/edit", {
     name,
     email,
@@ -123,16 +151,23 @@ async function UpdateTicket({
   return res.data;
 }
 
-// TODO : DELETE
+async function DeleteTicket(id: number) {
+  let res = await api.delete(`/tickets/${id}`);
+  return res.data;
+}
 
 export {
   LoginHandler,
   RefreshHandler,
+  GetAllUsers,
+  DeleteUserById,
   GetCurrentUser,
   GetCurrentUserTickets,
   GetUserById,
+  UpdateUserById,
   UpdateCurrentUser,
   GetTicketById,
   CreateTicket,
   UpdateTicket,
+  DeleteTicket,
 };
