@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import UsersPage from "./pages/UsersPage";
 import Alert from "./components/Alert";
 import Layout from "./pages/Layout";
+import TicketsPage from "./pages/TicketsPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path=":id" element={<Profile />} />
           </Route>
           <Route path="/tickets">
+            <Route index element={<TicketsPage />} />
             <Route path=":id" element={<TicketEdit />} />
             <Route path="new" element={<TicketCreate />} />
           </Route>
