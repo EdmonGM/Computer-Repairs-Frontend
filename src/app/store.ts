@@ -16,9 +16,10 @@ interface UserState {
 }
 
 interface FetchState {
-  message: any | null;
-  setMessage: (message: string | null) => void;
-  clearMessage: () => void;
+  message: string | null;
+  color: "danger" | "success";
+  setState: (message: string | null, color: "danger" | "success") => void;
+  clearState: () => void;
 }
 
 const useUserStore = create<UserState>((set) => ({
@@ -34,8 +35,9 @@ const useUserStore = create<UserState>((set) => ({
 
 const useFetchStore = create<FetchState>((set) => ({
   message: null,
-  setMessage: (message) => set({ message }),
-  clearMessage: () => set({ message: null }),
+  color: "danger",
+  setState: (message, color) => set({ message, color }),
+  clearState: () => set({ message: null }),
 }));
 
 export { useUserStore, useFetchStore };
