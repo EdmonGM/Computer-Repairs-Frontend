@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosResponse, isAxiosError } from "axios";
 import {
   ICreateTicket,
+  ICreateUser,
   ITicket,
   IUpdateCurrentUser,
   IUpdateTicket,
@@ -37,13 +38,15 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
 
-    return Promise.reject(error);
+    return error;
   }
 );
 
 function ApiMessageHandler(res: AxiosResponse) {
   if (isAxiosError(res)) {
-    useFetchStore.getState().setMessage(res.response?.data ?? null);
+    useFetchStore.getState().setState(res.response?.data ?? null, "danger");
+  } else if (res.status.toString()[0] === "2") {
+    useFetchStore.getState().setState(res.data, "success");
   }
 }
 
@@ -70,7 +73,13 @@ async function GetAllUsers(): Promise<Array<IUser>> {
   return res.data;
 }
 
-// TODO : SIGN-UP
+async function CreateUser(data: ICreateUser) {
+  let res = await api.post<ICreateUser, any>("/app-users", {
+    ...data,
+  });
+  ApiMessageHandler(res);
+  return res.data;
+}
 
 async function GetCurrentUserTickets(): Promise<Array<ITicket>> {
   let res = await api.get("/app-users/tickets");
@@ -100,18 +109,9 @@ async function GetCurrentUser(): Promise<IUser> {
   return res.data;
 }
 
-async function UpdateCurrentUser({
-  name,
-  email,
-  currentPassword,
-  newPassword,
-}: IUpdateCurrentUser) {
-  let res = await api.put("/app-users/current/edit", {
-    name,
-    email,
-    currentPassword,
-    newPassword,
-  });
+async function UpdateCurrentUser(data: IUpdateCurrentUser) {
+  let res = await api.put("/app-users/current/edit", { ...data });
+  ApiMessageHandler(res);
   return res.data;
 }
 
@@ -163,6 +163,7 @@ export {
   LoginHandler,
   RefreshHandler,
   GetAllUsers,
+  CreateUser,
   DeleteUserById,
   GetCurrentUser,
   GetCurrentUserTickets,
