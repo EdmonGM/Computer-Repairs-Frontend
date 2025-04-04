@@ -48,7 +48,7 @@ export default function Login() {
               placeholder="Enter Your Username"
               defaultValue="admin"
               rules={{
-                required: { value: true, message: "This field is required!" },
+                required: { value: true, message: "This field is required" },
                 minLength: {
                   value: 4,
                   message: "Username should not be less than 4 letters",
@@ -68,7 +68,15 @@ export default function Login() {
               rules={{
                 required: {
                   value: true,
+                  message: "Password is required",
+                },
+                minLength: {
+                  value: 8,
                   message: "Password should not be less than 8 letters",
+                },
+                maxLength: {
+                  value: 32,
+                  message: "Password should not be more than 32 letters",
                 },
               }}
             />

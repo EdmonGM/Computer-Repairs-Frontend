@@ -63,6 +63,17 @@ function UserEditModal({ id, label, title, user }: Props) {
                 label="Username"
                 placeholder="Enter Username"
                 defaultValue={user?.userName}
+                rules={{
+                  required: { value: true, message: "Username is required" },
+                  minLength: {
+                    value: 4,
+                    message: "Username should not be less than 4 letters",
+                  },
+                  maxLength: {
+                    value: 18,
+                    message: "Username should not be more than 18 letters",
+                  },
+                }}
               />
               <InputField<Inputs>
                 name="email"
@@ -70,6 +81,12 @@ function UserEditModal({ id, label, title, user }: Props) {
                 placeholder="name@example.com"
                 type="email"
                 defaultValue={user?.email}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "Email is required",
+                  },
+                }}
               />
               <InputField<Inputs>
                 name="name"
@@ -82,6 +99,16 @@ function UserEditModal({ id, label, title, user }: Props) {
                 label="Salary"
                 type="number"
                 defaultValue={user?.salary}
+                rules={{
+                  min: {
+                    value: 0,
+                    message: "Salary Should be higher than 0$",
+                  },
+                  max: {
+                    value: 999999,
+                    message: "Salary Should be less than 999999$",
+                  },
+                }}
               />
               <div className="mb-3 form-check form-switch">
                 <input
@@ -103,6 +130,20 @@ function UserEditModal({ id, label, title, user }: Props) {
                   name="password"
                   label="Password"
                   type="password"
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Password is required",
+                    },
+                    minLength: {
+                      value: 8,
+                      message: "Password should not be less than 8 letters",
+                    },
+                    maxLength: {
+                      value: 32,
+                      message: "Password should not be more than 32 letters",
+                    },
+                  }}
                 />
               )}
             </div>

@@ -60,6 +60,12 @@ function ProfileEditModal({ id, label, title }: Props) {
                 placeholder="name@example.com"
                 type="email"
                 defaultValue={email}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "Email is required",
+                  },
+                }}
               />
               <InputField<Inputs>
                 name="name"
@@ -88,11 +94,39 @@ function ProfileEditModal({ id, label, title }: Props) {
                     name="currentPassword"
                     label="Current Password"
                     type="password"
+                    rules={{
+                      required: {
+                        value: true,
+                        message: "Password is required",
+                      },
+                      minLength: {
+                        value: 8,
+                        message: "Password should not be less than 8 letters",
+                      },
+                      maxLength: {
+                        value: 32,
+                        message: "Password should not be more than 32 letters",
+                      },
+                    }}
                   />
                   <InputField<Inputs>
                     name="newPassword"
                     label="New Password"
                     type="password"
+                    rules={{
+                      required: {
+                        value: true,
+                        message: "Password is required",
+                      },
+                      minLength: {
+                        value: 8,
+                        message: "Password should not be less than 8 letters",
+                      },
+                      maxLength: {
+                        value: 32,
+                        message: "Password should not be more than 32 letters",
+                      },
+                    }}
                   />
                 </div>
               )}
