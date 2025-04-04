@@ -13,6 +13,7 @@ interface Props<TFieldValues extends FieldValues> {
   defaultValue?: string | number;
   placeholder?: string;
   rules?: RegisterOptions<TFieldValues>; // ex: required, minLength
+  className?: string;
   [key: string]: any; // Allows passing any additional props that will be spread onto the <input> element
 }
 function InputField<TFieldValues extends FieldValues>({
@@ -22,6 +23,7 @@ function InputField<TFieldValues extends FieldValues>({
   defaultValue,
   placeholder,
   rules,
+  className = "",
   ...rest
 }: Props<TFieldValues>) {
   const {
@@ -30,7 +32,7 @@ function InputField<TFieldValues extends FieldValues>({
   } = useFormContext<TFieldValues>();
 
   return (
-    <div className="mb-3">
+    <div className={"mb-3 " + className}>
       <div>
         <label htmlFor={name} className="form-label">
           {label}
