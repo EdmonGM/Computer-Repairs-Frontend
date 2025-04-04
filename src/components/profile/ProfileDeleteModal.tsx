@@ -8,7 +8,7 @@ function ProfileDeleteModal({ id, label }: { id: string; label: string }) {
   const { mutateAsync } = useMutation({
     mutationFn: DeleteUserById,
     mutationKey: ["users"],
-    // onSettled: () => navigate("/users"),
+    onSuccess: () => navigate(-1),
   });
 
   if (!userId) return;
