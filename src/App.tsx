@@ -10,6 +10,7 @@ import UsersPage from "./pages/UsersPage";
 import Alert from "./components/Alert";
 import Layout from "./pages/Layout";
 import TicketsPage from "./pages/TicketsPage";
+import CreateUserPage from "./components/usersPage/CreateUserPage";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="/users">
             <Route index element={<UsersPage />} />
             <Route path=":id" element={<Profile />} />
+            <Route path="new" element={<CreateUserPage />} />
           </Route>
         </Route>
 
