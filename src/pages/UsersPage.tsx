@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import UsersTable from "../components/usersPage/UsersTable";
 
 function UsersPage() {
@@ -8,6 +9,9 @@ function UsersPage() {
       </section>
       <section>
         <UsersTable />
+        <Link to="new" className="btn btn-success">
+          Create User
+        </Link>
       </section>
     </>
   );
