@@ -16,6 +16,14 @@ export interface IUser {
   role: "Admin" | "Employee";
   tickets: Array<Object>;
 }
+export interface ICreateUser {
+  name: string;
+  username: string;
+  email: string;
+  salary: number;
+  role: "Admin" | "Employee";
+  password: string;
+}
 export interface IUpdateUser {
   username: string;
   email: string;
