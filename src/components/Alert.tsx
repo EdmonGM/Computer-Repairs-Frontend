@@ -1,7 +1,7 @@
 import { useFetchStore } from "../app/store";
 
-function Alert({ color = "danger" }: { color?: string }) {
-  const { message, clearMessage } = useFetchStore();
+function Alert() {
+  const { message, color, clearState } = useFetchStore();
 
   if (!message) return;
 
@@ -16,7 +16,7 @@ function Alert({ color = "danger" }: { color?: string }) {
         className="btn-close"
         data-bs-dismiss="alert"
         aria-label="Close"
-        onClick={() => clearMessage()}
+        onClick={() => clearState()}
       ></button>
     </div>
   );
